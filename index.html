@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TravelMate - Tourist Guide</title>
+<style>
+:root{--brand:#0f766e;--brand2:#115e59;--accent:#f97316;--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#fff;--line:#e2e8f0;--ok:#16a34a;--warn:#d97706;--bad:#dc2626;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font:inherit;color:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--brand)}
+label{font-size:.82rem;font-weight:600;color:var(--muted);display:block;margin-bottom:5px}
+.hidden{display:none!important}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:12px 20px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.25rem;color:var(--brand)}
+.nav nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.nav nav a{padding:8px 14px;border-radius:999px;text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem}
+.nav nav a.on,.nav nav a:hover{background:#ccfbf1;color:var(--brand2)}
+.auth{display:flex;gap:8px;align-items:center;font-size:.9rem}
+.btn{padding:11px 20px;border-radius:12px;font-weight:700;background:var(--brand);color:#fff;transition:.15s}
+.btn:hover{background:var(--brand2)}
+.btn.alt{background:var(--accent)}.btn.alt:hover{background:#ea580c}
+.btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.btn.sm{padding:7px 14px;font-size:.85rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.hero{background:linear-gradient(135deg,#0f766e 0%,#0e7490 55%,#1d4ed8 100%);color:#fff;padding:44px 20px 70px}
+.hero h1{font-size:clamp(1.9rem,5vw,3.1rem);line-height:1.15;max-width:760px;margin:0 auto 10px;text-align:center}
+.hero p.sub{text-align:center;opacity:.9;max-width:600px;margin:0 auto 26px}
+.finder{background:#fff;color:var(--ink);max-width:960px;margin:0 auto;border-radius:20px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.grid4{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);font-size:.85rem;font-weight:600;background:#fff;color:var(--ink)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.chip.q{background:#f8fafc}
+.frow{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap}
+.hint{font-size:.82rem;color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto;padding:30px 20px}
+.sechead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.sechead h2{font-size:1.6rem}
+.banner{background:#fff;border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:.95rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(15,23,42,.07);cursor:pointer;transition:.2s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(15,23,42,.14)}
+.cimg{height:130px;display:flex;align-items:center;justify-content:center;font-size:3.6rem;position:relative}
+.heart{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);font-size:1.1rem}
+.rg{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.35);color:#fff;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px}
+.cbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cbody h3{font-size:1.1rem}
+.cbody .sm{font-size:.84rem;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.72rem;font-weight:700;background:#f1f5f9;color:#475569;padding:3px 9px;border-radius:999px}
+.badge{margin-top:auto;padding:9px 11px;border-radius:10px;font-size:.84rem;font-weight:700}
+.badge.ok{background:#dcfce7;color:#166534}.badge.warn{background:#fef3c7;color:#92400e}.badge.bad{background:#fee2e2;color:#991b1b}.badge.n{background:#e0f2fe;color:#075985}
+.empty{text-align:center;padding:50px 20px;color:var(--muted);background:#fff;border-radius:var(--r)}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:6px}
+.how div{background:#fff;border-radius:var(--r);padding:18px;box-shadow:0 2px 10px rgba(15,23,42,.06)}
+.how b{display:block;margin-bottom:4px}
+.ov{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.55);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:20px}
+.ov.m{z-index:200;align-items:center}
+.panel{background:#fff;width:100%;max-width:860px;border-radius:22px;overflow:hidden;position:relative;margin:auto}
+.panel.sm{max-width:520px;padding:24px}
+.dhead{color:#fff;padding:34px 26px 26px;position:relative}
+.dhead .big{font-size:3.4rem}
+.dhead h2{font-size:2rem}
+.x{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--ink);font-size:1.4rem;line-height:1;z-index:2}
+.panel.sm .x{background:#f1f5f9}
+.dbody{padding:22px 26px 100px}
+.dbody h3{margin:26px 0 12px;font-size:1.15rem}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 14px}
+.facts div{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.85rem}
+.facts b{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.vid{aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}
+.vid iframe{width:100%;height:100%;border:0}
+.poster{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;text-align:center;padding:20px;height:100%;text-decoration:none}
+.play{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.95);color:var(--accent);font-size:1.8rem;display:flex;align-items:center;justify-content:center}
+.place{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;cursor:pointer}
+.place.on{border-color:var(--brand);background:#f0fdfa}
+.place input{width:20px;height:20px;margin-top:3px;accent-color:var(--brand);flex:none;padding:0}
+.place .pt{flex:1}
+.place .pt b{display:block}
+.place .pt span{font-size:.86rem;color:var(--muted)}
+.place .pc{text-align:right;font-size:.82rem;white-space:nowrap}
+.place .pc strong{display:block;font-size:1rem;color:var(--brand2)}
+.place a{font-size:.78rem;color:var(--brand);font-weight:700;text-decoration:none}
+.bbox{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:16px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 6px;font-weight:700;font-size:.88rem}
+.seg button small{display:block;font-weight:500;color:var(--muted);font-size:.7rem;line-height:1.25;margin-top:2px}
+.seg button.on{border-color:var(--brand);background:#ccfbf1}
+.stepr{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+.stepr .s{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600}
+.stepr .s button{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font-weight:800}
+.line{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.92rem;gap:10px}
+.line.t{border:0;font-weight:800;font-size:1.05rem;color:var(--brand2);padding-top:10px}
+.capnote{font-size:.8rem;color:var(--muted);margin-top:8px}
+.bar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 26px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 -6px 20px rgba(0,0,0,.06)}
+.bar .big{font-size:1.35rem;font-weight:800;color:var(--brand2)}
+.bar small{display:block;color:var(--muted);font-size:.78rem}
+.steps{display:flex;gap:6px;margin:6px 0 18px}
+.steps i{flex:1;height:5px;border-radius:5px;background:var(--line)}.steps i.on{background:var(--brand)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fld{margin-bottom:12px}
+.sum{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}
+.ok{text-align:center}.ok .tick{font-size:3.4rem}
+.ref{display:inline-block;background:#ccfbf1;color:var(--brand2);font-weight:800;font-size:1.3rem;letter-spacing:.08em;padding:8px 18px;border-radius:12px;margin:10px 0}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.trip{background:#fff;border-radius:var(--r);padding:16px 18px;box-shadow:0 2px 10px rgba(15,23,42,.07);margin-bottom:14px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.trip h3{font-size:1.1rem}
+.st{display:inline-block;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:999px;text-transform:uppercase}
+.st.upcoming{background:#dbeafe;color:#1e40af}.st.completed{background:#dcfce7;color:#166534}.st.cancelled{background:#fee2e2;color:#991b1b}
+.acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(90px);background:#0f172a;color:#fff;padding:12px 20px;border-radius:12px;z-index:300;transition:.3s;font-weight:600;max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:.88rem}
+@media(max-width:760px){.grid4{grid-template-columns:1fr 1fr}.grid4>:first-child{grid-column:1/-1}.f2{grid-template-columns:1fr}.dbody,.bar{padding-left:16px;padding-right:16px}.nav{gap:8px;padding:10px 12px}.hero{padding:30px 14px 56px}.ov{padding:0}.panel{border-radius:0;min-height:100%}.ov.m{padding:12px}.ov.m .panel{border-radius:20px;min-height:0}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="logo">🌍 TravelMate</div>
+  <nav>
+    <a href="#home" data-v="explore">Home</a>
+    <a href="#destinations" data-v="explore">Destinations</a>
+    <a href="#myTrips" data-v="trips">My Trips</a>
+    <a href="#favorites" data-v="favs">Favorites</a>
+  </nav>
+  <div class="auth" id="auth"></div>
+</header>
+
+<main>
+<div id="v-explore">
+  <section id="home" class="hero">
+    <h1>Pick a budget. We'll show where you can really go.</h1>
+    <p class="sub">Realistic trips from India and abroad, with a spending cap for every place, a video preview and booking in a few taps.</p>
+    <div class="finder">
+      <div class="grid4">
+        <div><label for="fBudget">Total trip budget (₹)</label><input id="fBudget" type="number" min="1000" step="500" inputmode="numeric" placeholder="e.g. 50000"></div>
+        <div><label for="fTrav">Travellers</label><select id="fTrav"></select></div>
+        <div><label for="fDays">Trip length</label><select id="fDays"></select></div>
+        <div><label for="fReg">Where</label><select id="fReg"><option value="all">Anywhere in the world</option><option value="india">India only</option><option value="intl">International only</option></select></div>
+      </div>
+      <div class="chips" id="qBudgets"></div>
+      <div class="chips" id="fTags"></div>
+      <div class="frow">
+        <span class="hint">Budget is for the whole group and includes travel, stay, food and the top sights. Prices are estimates.</span>
+        <div class="acts"><button class="btn ghost" id="fReset">Reset</button><button class="btn alt" id="fGo">Find destinations</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="destinations" class="wrap">
+    <div class="sechead"><div><h2>Popular Destinations</h2><div class="hint">Discover beautiful places around the world</div></div></div>
+    <div id="banner"></div>
+    <div class="grid" id="grid"></div>
+    <div style="text-align:center;margin-top:18px"><button class="btn ghost" id="moreBtn"></button></div>
+  </section>
+
+  <section class="wrap" style="padding-top:0">
+    <h2 style="margin-bottom:12px">How it works</h2>
+    <div class="how">
+      <div><b>1. Set your budget</b>Tell us what you can spend, for how many people and days.</div>
+      <div><b>2. Pick a place</b>See what fits, the popular spots, and a video of the destination.</div>
+      <div><b>3. Know your cap</b>Every destination and every spot shows how much to carry.</div>
+      <div><b>4. Book it</b>Choose dates and comfort level, confirm, and find it in My Trips.</div>
+    </div>
+  </section>
+</div>
+
+<section id="v-trips" class="wrap hidden">
+  <div class="sechead"><div><h2>My Travel Plans</h2><div class="hint">Manage your upcoming and completed trips</div></div><button class="btn" onclick="openNewTrip()">+ Create New Trip</button></div>
+  <div class="tabs" id="tripTabs"></div>
+  <div id="tripList"></div>
+</section>
+
+<section id="v-favs" class="wrap hidden">
+  <div class="sechead"><div><h2>❤️ My Favorite Destinations</h2></div></div>
+  <div class="grid" id="favGrid"></div>
+</section>
+</main>
+
+<footer>© 2026 TravelMate Tourist Guide Platform · Costs are approximate estimates, always confirm prices before you pay.</footer>
+<div id="ov" class="ov hidden"></div>
+<div id="md" class="ov m hidden"></div>
+<div id="toast"></div>
+
+<script>
+/* ============================ DATA ============================
+   Costs are rough per-person estimates in ₹ (2026, from India). Edit freely.
+   access = return travel from a major Indian city, extra = visa/permits,
+   daily = [Budget, Comfort, Luxury] per day for stay + meals + local transport,
+   places = [name, what to do, cost of that outing per person (entry/activity/transfer, no meals), hours]
+   vid = YouTube video ID. Paste one in to enable the embedded player for that destination. */
+const TIERS=[
+ {n:'Budget',i:'🎒',d:'Hostels / 3★, public transport'},
+ {n:'Comfort',i:'🛏️',d:'3–4★ hotels, cabs, some experiences'},
+ {n:'Luxury',i:'💎',d:'4–5★ stays, private transfers'}];
+const TAGS=['Beach','Mountains','City','Culture','Adventure','Luxury','Nature'];
+const D=[
+{id:'goa',name:'Goa',country:'India',region:'india',emoji:'🏖️',grad:['#0ea5e9','#f59e0b'],tags:['Beach','Culture'],best:'Nov – Feb',minDays:3,access:6000,extra:0,daily:[1800,3500,9000],vid:'',
+ about:'Sun, sand and Portuguese-era churches. Party in the north, relax in the quiet south.',
+ places:[['Baga & Calangute Beach','Water sports, beach shacks and nightlife.',1500,'4 hrs'],['Old Goa & Basilica of Bom Jesus','UNESCO-listed churches and heritage walk.',500,'3 hrs'],['Dudhsagar Waterfalls','Jeep safari to a four-tiered waterfall.',1800,'6 hrs'],['Palolem Beach','Calm crescent beach in South Goa, kayaking and sunsets.',1200,'5 hrs']]},
+{id:'manali',name:'Manali',country:'India',region:'india',emoji:'🏔️',grad:['#1e3a8a','#38bdf8'],tags:['Mountains','Adventure','Nature'],best:'Mar – Jun, Dec – Feb (snow)',minDays:4,access:3500,extra:0,daily:[1500,3200,8000],vid:'',
+ about:'Himalayan valley town with snow, rivers, cafes and adventure sports.',
+ places:[['Solang Valley','Paragliding, zorbing and snow activities.',2500,'5 hrs'],['Hadimba Temple & Mall Road','Cedar-forest temple and a lively market.',600,'3 hrs'],['Old Manali Cafes','Riverside cafes and Manu Temple.',900,'3 hrs'],['Atal Tunnel & Sissu','Scenic drive across the Rohtang range (Rohtang Pass is seasonal and needs a permit).',3000,'7 hrs']]},
+{id:'jaipur',name:'Jaipur',country:'India',region:'india',emoji:'🏰',grad:['#be185d','#fb923c'],tags:['Culture','City'],best:'Oct – Mar',minDays:2,access:3000,extra:0,daily:[1500,3500,9000],vid:'',
+ about:'The Pink City: forts, palaces and bazaars full of Rajasthani colour.',
+ places:[['Amber Fort','Hilltop fort with mirror palace.',900,'3 hrs'],['City Palace & Hawa Mahal','Royal residence and the iconic facade.',900,'3 hrs'],['Jantar Mantar & Johari Bazaar','Astronomical instruments and jewellery shopping.',700,'3 hrs'],['Nahargarh Sunset & Chokhi Dhani','Fort sunset then a Rajasthani village dinner.',1800,'5 hrs']]},
+{id:'kerala',name:'Kerala',country:'India',region:'india',emoji:'🛶',grad:['#15803d','#22d3ee'],tags:['Nature','Beach'],best:'Sep – Mar',minDays:4,access:8000,extra:0,daily:[1800,3800,9500],vid:'',
+ about:'Backwaters, tea hills and spice forests in God\'s Own Country.',
+ places:[['Alleppey Backwaters Houseboat','Cruise the canals on a houseboat.',4500,'Full day'],['Munnar Tea Gardens','Rolling tea estates and viewpoints.',1800,'6 hrs'],['Fort Kochi & Chinese Fishing Nets','Colonial streets, cafes and sunset.',1000,'4 hrs'],['Periyar Wildlife Sanctuary','Boat safari and spice plantation visit.',2000,'5 hrs']]},
+{id:'rishikesh',name:'Rishikesh',country:'India',region:'india',emoji:'🧘',grad:['#0d9488','#a3e635'],tags:['Adventure','Culture','Nature'],best:'Sep – Apr',minDays:2,access:2500,extra:0,daily:[1200,2800,7000],vid:'',
+ about:'Yoga capital of the world on the Ganges, with white-water rafting.',
+ places:[['Ganga Aarti at Triveni Ghat','Evening prayer ceremony by the river.',300,'1.5 hrs'],['River Rafting','Grade II–IV rapids on the Ganga.',1500,'3 hrs'],['Beatles Ashram','Forest ashram with famous graffiti.',400,'2 hrs'],['Neer Garh Waterfall Trek','Easy trek to a cool waterfall.',500,'3 hrs']]},
+{id:'andaman',name:'Andaman Islands',country:'India',region:'india',emoji:'🐠',grad:['#0369a1','#2dd4bf'],tags:['Beach','Adventure'],best:'Nov – Apr',minDays:5,access:20000,extra:0,daily:[2500,5000,12000],vid:'',
+ about:'Turquoise water, coral reefs and quiet white-sand beaches.',
+ places:[['Radhanagar Beach, Havelock','One of Asia\'s best beaches.',2000,'4 hrs'],['Cellular Jail & Light Show','History of the freedom struggle in Port Blair.',800,'3 hrs'],['Scuba / Snorkel at Elephant Beach','Reef diving for beginners.',3500,'4 hrs'],['Neil Island (Bharatpur Beach)','Laid-back island and coral walks.',2500,'Full day']]},
+{id:'ladakh',name:'Ladakh',country:'India',region:'india',emoji:'⛰️',grad:['#7c2d12','#38bdf8'],tags:['Mountains','Adventure','Nature'],best:'Jun – Sep',minDays:6,access:16000,extra:1000,extraNote:'Inner-line permits & fees',daily:[2500,4500,10000],vid:'',
+ about:'High-altitude desert, monasteries and some of the world\'s highest roads. Plan 2 days to acclimatise.',
+ places:[['Pangong Lake','Colour-changing lake at 4,350 m.',6000,'Full day'],['Nubra Valley & Khardung La','Sand dunes and double-humped camels.',6500,'Full day'],['Leh Palace & Shanti Stupa','Old town views and sunset.',800,'4 hrs'],['Magnetic Hill & Sangam','Confluence of the Indus and Zanskar.',1500,'4 hrs']]},
+{id:'udaipur',name:'Udaipur',country:'India',region:'india',emoji:'🏯',grad:['#7e22ce','#fbbf24'],tags:['Culture','Luxury','City'],best:'Oct – Mar',minDays:3,access:5000,extra:0,daily:[1700,4000,11000],vid:'',
+ about:'The City of Lakes, romantic palaces and rooftop dinners.',
+ places:[['City Palace','Palace museum above Lake Pichola.',900,'3 hrs'],['Lake Pichola Boat Ride','Sunset cruise to Jag Mandir.',800,'1.5 hrs'],['Saheliyon ki Bari & Fateh Sagar','Gardens and lakeside promenade.',600,'3 hrs'],['Kumbhalgarh Fort','Fort with the second-longest wall after China\'s.',2500,'Full day']]},
+{id:'nepal',name:'Nepal (Kathmandu & Pokhara)',country:'Nepal',region:'intl',emoji:'🙏',grad:['#b91c1c','#1d4ed8'],tags:['Mountains','Culture','Adventure'],best:'Oct – Nov, Mar – Apr',minDays:5,access:12000,extra:0,daily:[1800,3500,8000],vid:'',
+ about:'Ancient temples, lakeside Pokhara and views of the Annapurna range. Check current entry rules before you go.',
+ places:[['Pashupatinath & Boudhanath','Sacred Hindu temple and giant Buddhist stupa.',1200,'4 hrs'],['Phewa Lake, Pokhara','Boating with mountain reflections.',1500,'4 hrs'],['Sarangkot Sunrise & Paragliding','Himalayan sunrise, tandem flight.',7500,'Half day'],['Swayambhunath & Thamel','Monkey temple and backpacker streets.',800,'4 hrs']]},
+{id:'bhutan',name:'Bhutan',country:'Bhutan',region:'intl',emoji:'🐉',grad:['#ea580c','#166534'],tags:['Mountains','Culture','Nature'],best:'Mar – May, Sep – Nov',minDays:5,access:10000,extra:6000,extraNote:'Permit & sustainable development fee (approx.)',daily:[3500,6000,14000],vid:'',
+ about:'Happy, carbon-negative Himalayan kingdom of dzongs and monasteries.',
+ places:[['Tiger\'s Nest (Paro Taktsang)','Cliffside monastery hike.',2500,'5 hrs'],['Punakha Dzong & Dochula Pass','Riverside fortress and 108 chortens.',3000,'Full day'],['Thimphu: Buddha Dordenma & Dzong','Giant Buddha and the seat of government.',1500,'4 hrs'],['Paro Rinpung Dzong','Fortress above the valley.',1200,'3 hrs']]},
+{id:'srilanka',name:'Sri Lanka',country:'Sri Lanka',region:'intl',emoji:'🐘',grad:['#0891b2','#65a30d'],tags:['Beach','Culture','Nature'],best:'Dec – Mar (south/west)',minDays:6,access:16000,extra:2500,extraNote:'Visa / ETA (approx.)',daily:[2500,5000,12000],vid:'',
+ about:'Ancient rock fortresses, tea country trains and surf beaches in one small island.',
+ places:[['Sigiriya Rock Fortress','Climb a 5th-century rock palace.',5500,'4 hrs'],['Kandy & Temple of the Tooth','Sacred relic temple and lake.',1800,'4 hrs'],['Ella & Nine Arch Bridge','Famous scenic train and bridge.',2000,'Full day'],['Galle Fort & Mirissa','Dutch fort and whale watching.',4000,'Full day']]},
+{id:'thailand',name:'Thailand',country:'Thailand',region:'intl',emoji:'🛕',grad:['#db2777','#facc15'],tags:['Beach','City','Adventure'],best:'Nov – Feb',minDays:5,access:22000,extra:0,daily:[3000,6000,15000],vid:'xaMrlWeyqiQ',
+ about:'Street food, golden temples and island hopping, a classic first international trip.',
+ places:[['Grand Palace & Wat Pho, Bangkok','Thailand\'s most dazzling temples.',2500,'4 hrs'],['Phi Phi Islands Tour, Phuket','Speedboat day trip with snorkelling.',4500,'Full day'],['Chiang Mai Elephant Sanctuary','Ethical sanctuary visit.',4500,'Full day'],['Chatuchak Market & Street Food','Huge weekend market and food crawl.',1500,'4 hrs']]},
+{id:'bali',name:'Bali',country:'Indonesia',region:'intl',emoji:'🌴',grad:['#059669','#fde047'],tags:['Beach','Nature','Culture'],best:'Apr – Oct',minDays:5,access:32000,extra:0,daily:[3000,6500,16000],vid:'',
+ about:'Rice terraces, cliff temples and surf beaches with a deeply spiritual culture.',
+ places:[['Ubud Monkey Forest & Tegalalang Terraces','Forest sanctuary and rice-terrace swings.',2500,'5 hrs'],['Uluwatu Temple & Kecak Dance','Clifftop temple at sunset.',2500,'4 hrs'],['Nusa Penida Day Trip','Kelingking Beach and manta point.',5000,'Full day'],['Mount Batur Sunrise Trek','Volcano trek with breakfast at the top.',4500,'Half day']]},
+{id:'dubai',name:'Dubai',country:'UAE',region:'intl',emoji:'🌆',grad:['#1e293b','#f59e0b'],tags:['City','Luxury','Adventure'],best:'Nov – Mar',minDays:4,access:25000,extra:6500,extraNote:'UAE visa (approx.)',daily:[5000,9000,22000],vid:'',
+ about:'Record-breaking skyline, desert safaris and world-class shopping.',
+ places:[['Burj Khalifa: At the Top','Observation deck of the tallest tower.',4500,'2 hrs'],['Desert Safari','Dune bashing, camel ride and BBQ dinner.',4500,'6 hrs'],['Dubai Mall & Fountain Show','Mall, aquarium and the evening fountain.',1500,'4 hrs'],['Old Dubai: Souks & Abra Ride','Gold and spice souks, creek crossing.',1200,'3 hrs']]},
+{id:'singapore',name:'Singapore',country:'Singapore',region:'intl',emoji:'🦁',grad:['#dc2626','#0ea5e9'],tags:['City','Luxury'],best:'Feb – Apr',minDays:4,access:28000,extra:3000,extraNote:'Visa (approx.)',daily:[6000,10000,22000],vid:'',
+ about:'Spotless, green and packed with food, gardens and theme parks.',
+ places:[['Gardens by the Bay','Supertrees and cloud forest dome.',3500,'3 hrs'],['Sentosa & Universal Studios','Theme park and beaches.',7500,'Full day'],['Marina Bay & Merlion','Skyline walk and light show.',1000,'3 hrs'],['Night Safari','World\'s first nocturnal zoo.',4500,'3 hrs']]},
+{id:'maldives',name:'Maldives',country:'Maldives',region:'intl',emoji:'🏝️',grad:['#06b6d4','#6366f1'],tags:['Beach','Luxury'],best:'Nov – Apr',minDays:4,access:28000,extra:0,daily:[7000,14000,45000],vid:'',
+ about:'Overwater villas and glass-clear lagoons. Local-island guesthouses keep it affordable.',
+ places:[['Snorkel with Reef Life & Manta Rays','Guided snorkel trip.',4500,'3 hrs'],['Sandbank Picnic','Private sandbank lunch by speedboat.',6000,'4 hrs'],['Sunset Dolphin Cruise','Dhoni boat at golden hour.',5000,'2 hrs'],['Malé City Walk','Fish market, mosques, local snacks.',1200,'3 hrs']]},
+{id:'japan',name:'Japan',country:'Japan',region:'intl',emoji:'🗻',grad:['#e11d48','#f1f5f9'],tags:['City','Culture','Nature'],best:'Mar – May, Oct – Nov',minDays:7,access:55000,extra:3000,extraNote:'Visa (approx.)',daily:[7000,13000,30000],vid:'',
+ about:'Neon Tokyo, temple Kyoto and bullet trains. Spotless, safe and unforgettable.',
+ places:[['Senso-ji & Shibuya, Tokyo','Old temple and the famous crossing.',3500,'5 hrs'],['Fushimi Inari & Gion, Kyoto','Thousands of torii gates and geisha district.',3500,'5 hrs'],['Mt. Fuji & Lake Kawaguchi','Day trip from Tokyo.',9000,'Full day'],['Osaka Castle & Dotonbori','Castle plus street-food capital.',4500,'6 hrs']]},
+{id:'switzerland',name:'Switzerland',country:'Switzerland',region:'intl',emoji:'🚠',grad:['#dc2626','#38bdf8'],tags:['Mountains','Nature','Luxury'],best:'Jun – Sep, Dec – Mar',minDays:7,access:70000,extra:9500,extraNote:'Schengen visa (approx.)',daily:[12000,20000,40000],vid:'',
+ about:'Alpine peaks, panoramic trains and picture-book lakeside towns. Expensive, but worth saving for.',
+ places:[['Jungfraujoch: Top of Europe','Cogwheel train to a glacier plateau.',22000,'Full day'],['Lucerne & Chapel Bridge','Old town, lake cruise and bridge walk.',6000,'6 hrs'],['Zermatt & Gornergrat','Matterhorn views by train.',18000,'Full day'],['Lauterbrunnen Valley','72 waterfalls and Alpine villages.',6000,'Half day']]}
+];
+
+/* ============================ HELPERS ============================ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const r500=n=>Math.ceil(n/500)*500, r100=n=>Math.ceil(n/100)*100;
+const ld=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const isoDate=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const today=()=>isoDate(new Date());
+const addDays=(iso,n)=>{const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return isoDate(d)};
+const byId=id=>D.find(d=>d.id===id);
+const defAct=d=>d.places.slice(0,3).reduce((s,p)=>s+p[2],0);
+const est=(d,days,t)=>d.access+(d.extra||0)+d.daily[t]*days+defAct(d);
+const bestTier=(d,days,pp)=>{for(let t=2;t>=0;t--)if(est(d,days,t)<=pp)return t;return -1};
+const maxDays=(d,pp)=>Math.floor((pp-d.access-(d.extra||0)-defAct(d))/d.daily[0]);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2600)}
+
+const S={budget:null,trav:2,days:5,region:'all',tags:new Set(),showAll:false,user:ld('tm_user',null),favs:new Set(ld('tm_favs',[])),trips:ld('tm_trips',[]),tripTab:'all'};
+
+/* ============================ FINDER ============================ */
+function initFinder(){
+  $('#fTrav').innerHTML=[1,2,3,4,5,6,8,10].map(n=>`<option value="${n}" ${n===S.trav?'selected':''}>${n} traveller${n>1?'s':''}</option>`).join('');
+  $('#fDays').innerHTML=[2,3,4,5,6,7,8,10,12,14,21].map(n=>`<option value="${n}" ${n===S.days?'selected':''}>${n} days</option>`).join('');
+  $('#qBudgets').innerHTML='<span class="hint" style="align-self:center">Quick pick:</span>'+[15000,30000,50000,100000,200000,400000].map(b=>`<button class="chip q" onclick="setBudget(${b})">${fmt(b)}</button>`).join('');
+  $('#fTags').innerHTML='<span class="hint" style="align-self:center">I like:</span>'+TAGS.map(t=>`<button class="chip" data-t="${t}" onclick="toggleTag('${t}')">${t}</button>`).join('');
+  $('#fGo').onclick=()=>{readFinder();renderGrid();$('#destinations').scrollIntoView()};
+  $('#fReset').onclick=()=>{S.budget=null;S.tags.clear();S.region='all';S.showAll=false;$('#fBudget').value='';$('#fReg').value='all';syncTags();renderGrid()};
+  ['fBudget','fTrav','fDays','fReg'].forEach(id=>$('#'+id).addEventListener('change',()=>{readFinder();renderGrid()}));
+  $('#fBudget').addEventListener('input',()=>{readFinder();renderGrid()});
+  $('#moreBtn').onclick=()=>{S.showAll=!S.showAll;renderGrid()};
+}
+function readFinder(){const b=parseFloat($('#fBudget').value);S.budget=b>0?b:null;S.trav=+$('#fTrav').value;S.days=+$('#fDays').value;S.region=$('#fReg').value}
+function setBudget(b){$('#fBudget').value=b;readFinder();renderGrid()}
+function toggleTag(t){S.tags.has(t)?S.tags.delete(t):S.tags.add(t);syncTags();renderGrid()}
+function syncTags(){document.querySelectorAll('#fTags .chip').forEach(c=>c.classList.toggle('on',S.tags.has(c.dataset.t)))}
+
+/* ============================ CARDS & GRID ============================ */
+function evalDest(d){
+  const pp=S.budget?S.budget/S.trav:null, days=S.days;
+  const low=est(d,days,0);
+  if(pp==null)return{state:'n',low,days};
+  const t=bestTier(d,days,pp);
+  if(t>=0)return{state:'ok',t,cost:est(d,days,t),low,days,max:maxDays(d,pp)};
+  if(low<=pp*1.2)return{state:'warn',low,days,need:low*S.trav};
+  return{state:'bad',low,days,need:low*S.trav,max:maxDays(d,pp)};
+}
+function cardHTML(d,e){
+  let b;
+  if(e.state==='ok')b=`<div class="badge ok">✅ Fits · ${TIERS[e.t].i} ${TIERS[e.t].n} · ${fmt(e.cost)} per person<br><span style="font-weight:500">${e.days} days${e.max>e.days?' · up to '+e.max+' days at Budget level':''}</span></div>`;
+  else if(e.state==='warn')b=`<div class="badge warn">⚠️ Just over · need ~${fmt(e.need)} total<br><span style="font-weight:500">Or ${e.low>0&&S.budget&&maxDays(d,S.budget/S.trav)>=d.minDays?'go for '+maxDays(d,S.budget/S.trav)+' days':'trim a day or two'}</span></div>`;
+  else if(e.state==='bad')b=`<div class="badge bad">Over budget · from ${fmt(e.need)} total<br><span style="font-weight:500">${e.max>=d.minDays?'Fits in '+e.max+' days':'Needs a bigger budget'}</span></div>`;
+  else b=`<div class="badge n">From ${fmt(e.low)} per person · ${e.days} days</div>`;
+  return `<article class="card" onclick="openDest('${d.id}')">
+   <div class="cimg" style="background:linear-gradient(135deg,${d.grad[0]},${d.grad[1]})">${d.emoji}
+     <span class="rg">${d.region==='india'?'🇮🇳 India':'✈️ International'}</span>
+     <button class="heart" aria-label="Favourite" onclick="event.stopPropagation();toggleFav('${d.id}')">${S.favs.has(d.id)?'❤️':'🤍'}</button></div>
+   <div class="cbody"><h3>${esc(d.name)}</h3><div class="sm">${esc(d.country)} · Best: ${esc(d.best)}</div>
+   <div class="tags">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>${b}
+   <button class="btn sm" style="margin-top:4px">View, watch & book</button></div></article>`;
+}
+function renderGrid(){
+  syncTags();
+  let list=D.filter(d=>(S.region==='all'||d.region===S.region)&&(!S.tags.size||d.tags.some(t=>S.tags.has(t))));
+  let rows=list.map(d=>({d,e:evalDest(d)}));
+  const fits=rows.filter(r=>r.e.state==='ok').sort((a,b)=>b.e.t-a.e.t||b.e.cost-a.e.cost);
+  const warn=rows.filter(r=>r.e.state==='warn').sort((a,b)=>a.e.low-b.e.low);
+  const bad=rows.filter(r=>r.e.state==='bad').sort((a,b)=>a.e.low-b.e.low);
+  const neutral=rows.filter(r=>r.e.state==='n').sort((a,b)=>a.e.low-b.e.low);
+  let show,banner='',moreTxt='';
+  if(S.budget==null){show=neutral;banner='<div class="banner">Enter a budget above to see which destinations you can actually afford. Showing all, cheapest first.</div>'}
+  else{
+    const pp=S.budget/S.trav;
+    banner=`<div class="banner"><b>${fits.length}</b> destination${fits.length===1?'':'s'} fit ${fmt(S.budget)} for ${S.trav} traveller${S.trav>1?'s':''} (${fmt(pp)} each) over ${S.days} days${warn.length?`, <b>${warn.length}</b> more are just over`:''}.</div>`;
+    show=fits.concat(warn);
+    if(S.showAll)show=show.concat(bad);
+    if(bad.length)moreTxt=S.showAll?'Hide over-budget destinations':`Show ${bad.length} more over-budget destination${bad.length>1?'s':''}`;
+    if(!show.length&&!bad.length){}
+    if(!fits.length&&!warn.length){const c=rows.sort((a,b)=>a.e.low-b.e.low)[0];if(c)banner=`<div class="banner" style="border-left-color:var(--warn)">Nothing fits ${fmt(S.budget)} for ${S.days} days. The closest is <b>${esc(c.d.name)}</b>, around ${fmt(c.e.need)} total. Try a bigger budget, fewer travellers, or fewer days.</div>`}
+  }
+  $('#banner').innerHTML=banner;
+  $('#grid').innerHTML=show.length?show.map(r=>cardHTML(r.d,r.e)).join(''):'<div class="empty" style="grid-column:1/-1">No destinations match those filters. Try removing an interest or choosing "Anywhere".</div>';
+  $('#moreBtn').textContent=moreTxt;$('#moreBtn').classList.toggle('hidden',!moreTxt);
+  renderFavs();
+}
+function toggleFav(id){S.favs.has(id)?S.favs.delete(id):S.favs.add(id);sv('tm_favs',[...S.favs]);renderGrid();toast(S.favs.has(id)?'Added to favourites ❤️':'Removed from favourites');if(DS&&DS.d.id===id)renderDetailHeart()}
+function renderFavs(){
+  const l=D.filter(d=>S.favs.has(d.id));
+  $('#favGrid').innerHTML=l.length?l.map(d=>cardHTML(d,evalDest(d))).join(''):'<div class="empty" style="grid-column:1/-1">No favourites yet. Tap the 🤍 on any destination to save it here.</div>';
+}
+
+/* ============================ DESTINATION DETAIL ============================ */
+let DS=null;
+function calc(d,tier,days,sel){
+  const acts=[...sel].reduce((s,i)=>s+d.places[i][2],0);
+  const stay=d.daily[tier]*days, sub=d.access+(d.extra||0)+stay+acts;
+  const buffer=sub*0.1, cap=r500(sub+buffer);
+  return{acts,stay,sub,buffer,cap};
+}
+function openDest(id){
+  const d=byId(id);if(!d)return;
+  const pp=S.budget?S.budget/S.trav:null;
+  let tier=1;if(pp!=null){const t=bestTier(d,S.days,pp);tier=t>=0?t:0}
+  DS={d,tier,days:Math.max(S.days,d.minDays>S.days?d.minDays:S.days),trav:S.trav,sel:new Set([0,1,2])};
+  const q=encodeURIComponent(d.name+' travel guide 4K');
+  const vid=d.vid?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(d.vid)}" title="${esc(d.name)} video" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+    <div class="hint" style="margin-top:8px">Video not loading? <a href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">Watch ${esc(d.name)} videos on YouTube</a></div>`
+   :`<div class="vid"><a class="poster" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,${d.grad[0]},${d.grad[1]})"><div class="play">▶</div><b style="font-size:1.1rem">Watch ${esc(d.name)} travel videos</b><span style="opacity:.9;font-size:.85rem">Opens YouTube in a new tab</span></a></div>`;
+  $('#ov').innerHTML=`<div class="panel">
+   <div class="dhead" style="background:linear-gradient(135deg,${d.grad[0]},${d.grad[1]})">
+    <button class="x" onclick="closeDest()" aria-label="Close">×</button>
+    <div class="big">${d.emoji}</div><h2>${esc(d.name)}</h2><div style="opacity:.92">${esc(d.country)} · ${d.tags.join(' · ')}</div>
+    <button class="btn sm ghost" id="dHeart" style="margin-top:12px" onclick="toggleFav('${d.id}')"></button></div>
+   <div class="dbody">
+    <div class="facts"><div><b>Best time</b>${esc(d.best)}</div><div><b>Ideal trip</b>${d.minDays}+ days</div><div><b>Getting there</b>~${fmt(d.access)} return</div>${d.extra?`<div><b>${esc(d.extraNote)}</b>~${fmt(d.extra)}</div>`:''}</div>
+    <p>${esc(d.about)}</p>
+    ${d.region==='intl'?'<p class="hint" style="margin-top:6px">Check passport, visa and entry rules for your nationality before booking.</p>':''}
+    <h3>🎥 Feel the place</h3>${vid}
+    <h3>📍 Popular places to visit</h3><div id="places"></div>
+    <div class="hint">Tick the places you want to include. Each shows the cap to carry for that outing (entry, activity and transfers, excluding meals).</div>
+    <h3>💰 Budget planner & cap</h3><div id="bbox" class="bbox"></div>
+   </div>
+   <div class="bar" id="bar"></div></div>`;
+  $('#ov').classList.remove('hidden');$('#ov').scrollTop=0;document.body.style.overflow='hidden';
+  renderDetailHeart();renderPlaces();updateBudget();
+}
+function closeDest(){$('#ov').classList.add('hidden');$('#ov').innerHTML='';document.body.style.overflow='';DS=null}
+function renderDetailHeart(){const h=$('#dHeart');if(h&&DS)h.textContent=S.favs.has(DS.d.id)?'❤️ Saved':'🤍 Save to favourites'}
+function renderPlaces(){
+  const d=DS.d;
+  $('#places').innerHTML=d.places.map((p,i)=>`<label class="place ${DS.sel.has(i)?'on':''}">
+   <input type="checkbox" ${DS.sel.has(i)?'checked':''} onchange="togglePlace(${i})">
+   <div class="pt"><b>${esc(p[0])}</b><span>${esc(p[1])} · ${esc(p[3])}</span><br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[0]+' '+d.name)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open in Maps ↗</a></div>
+   <div class="pc">Carry up to<strong>${fmt(r100(p[2]*1.1))}</strong>per person</div></label>`).join('');
+}
+function togglePlace(i){DS.sel.has(i)?DS.sel.delete(i):DS.sel.add(i);renderPlaces();updateBudget()}
+function setTier(t){DS.tier=t;updateBudget()}
+function stepDays(n){DS.days=Math.min(30,Math.max(1,DS.days+n));updateBudget()}
+function stepTrav(n){DS.trav=Math.min(20,Math.max(1,DS.trav+n));updateBudget()}
+function updateBudget(){
+  const {d,tier,days,trav,sel}=DS, c=calc(d,tier,days,sel);
+  const total=c.cap*trav;
+  let fit='';
+  if(S.budget){fit=total<=S.budget?`<div class="badge ok" style="margin-top:12px">✅ Within your ${fmt(S.budget)} budget (${fmt(S.budget-total)} to spare)</div>`:`<div class="badge warn" style="margin-top:12px">⚠️ ${fmt(total-S.budget)} above your ${fmt(S.budget)} budget. Try a lower comfort level, fewer places or fewer days.</div>`}
+  const short=days<d.minDays?`<div class="badge warn" style="margin-bottom:12px">${days} days is short for ${esc(d.name)}. ${d.minDays}+ days works best.</div>`:'';
+  $('#bbox').innerHTML=short+`<div class="seg">${TIERS.map((t,i)=>`<button class="${i===tier?'on':''}" onclick="setTier(${i})">${t.i} ${t.n}<small>${t.d}</small></button>`).join('')}</div>
+   <div class="stepr"><div class="s">Days <button onclick="stepDays(-1)">−</button><span>${days}</span><button onclick="stepDays(1)">+</button></div>
+   <div class="s">Travellers <button onclick="stepTrav(-1)">−</button><span>${trav}</span><button onclick="stepTrav(1)">+</button></div></div>
+   <div class="line"><span>Getting there & back</span><b>${fmt(d.access)}</b></div>
+   ${d.extra?`<div class="line"><span>${esc(d.extraNote)}</span><b>${fmt(d.extra)}</b></div>`:''}
+   <div class="line"><span>Stay, meals & local transport (${days} days × ${fmt(d.daily[tier])})</span><b>${fmt(c.stay)}</b></div>
+   <div class="line"><span>Selected places (${sel.size})</span><b>${fmt(c.acts)}</b></div>
+   <div class="line"><span>Safety buffer (10%): shopping, tips, surprises</span><b>${fmt(c.buffer)}</b></div>
+   <div class="line t"><span>Recommended cap per person</span><span>${fmt(c.cap)}</span></div>
+   <div class="line t" style="padding-top:0"><span>For ${trav} traveller${trav>1?'s':''}</span><span>${fmt(total)}</span></div>${fit}
+   <div class="capnote">Carry no less than this to travel comfortably. Estimates are for 2026 and move with season, flights and exchange rates.</div>`;
+  $('#bar').innerHTML=`<div><div class="big">${fmt(c.cap)} <small style="display:inline">per person</small></div><small>${fmt(total)} for ${trav} · ${days} days · ${TIERS[tier].n}</small></div><button class="btn alt" onclick="openBooking()" ${sel.size?'':'disabled'}>Book this trip</button>`;
+}
+
+/* ============================ BOOKING ============================ */
+let BK=null;
+function openBooking(){
+  const {d,tier,days,trav,sel}=DS;
+  BK={d,tier,days,trav,sel:new Set(sel),start:addDays(today(),14),name:S.user?S.user.name:'',email:S.user?S.user.email:'',phone:'',notes:'',step:1,done:null};
+  $('#md').classList.remove('hidden');renderBooking();
+}
+function closeModal(){$('#md').classList.add('hidden');$('#md').innerHTML=''}
+function bkTotals(){const c=calc(BK.d,BK.tier,BK.days,BK.sel);return{c,total:c.cap*BK.trav}}
+function renderBooking(){
+  const {d,step}=BK,{c,total}=bkTotals();
+  const dots=`<div class="steps">${[1,2,3].map(i=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div>`;
+  let body='';
+  if(BK.done){
+    body=`<div class="ok"><div class="tick">🎉</div><h2>Booking confirmed!</h2><p>${esc(d.name)} · ${BK.start} to ${addDays(BK.start,BK.days)}</p><div class="ref">${BK.done}</div>
+    <p class="hint">Saved in My Trips. This is a demo booking, so no payment was taken.</p>
+    <div class="acts" style="justify-content:center;margin-top:16px"><button class="btn" onclick="closeModal();closeDest();go('trips')">View My Trips</button><button class="btn ghost" onclick="closeModal()">Keep exploring</button></div></div>`;
+  }else if(step===1){
+    body=`<h2>Plan your trip to ${esc(d.name)}</h2>${dots}
+    <div class="f2"><div><label>Start date</label><input type="date" min="${today()}" value="${BK.start}" onchange="BK.start=this.value;bkPrice()"></div>
+    <div><label>Days</label><select onchange="BK.days=+this.value;bkPrice()">${[2,3,4,5,6,7,8,9,10,12,14,21].map(n=>`<option ${n===BK.days?'selected':''}>${n}</option>`).join('')}</select></div></div>
+    <div class="f2"><div><label>Travellers</label><select onchange="BK.trav=+this.value;bkPrice()">${[1,2,3,4,5,6,8,10].map(n=>`<option ${n===BK.trav?'selected':''}>${n}</option>`).join('')}</select></div>
+    <div><label>Comfort level</label><select onchange="BK.tier=+this.value;bkPrice()">${TIERS.map((t,i)=>`<option value="${i}" ${i===BK.tier?'selected':''}>${t.i} ${t.n}</option>`).join('')}</select></div></div>
+    <div class="sum" id="bkp"></div>
+    <div class="acts" style="justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="bkNext()">Continue</button></div>`;
+  }else if(step===2){
+    body=`<h2>Traveller details</h2>${dots}
+    <div class="fld"><label>Lead traveller name</label><input value="${esc(BK.name)}" oninput="BK.name=this.value" autocomplete="name"></div>
+    <div class="f2"><div><label>Email</label><input type="email" value="${esc(BK.email)}" oninput="BK.email=this.value" autocomplete="email"></div>
+    <div><label>Phone</label><input type="tel" value="${esc(BK.phone)}" oninput="BK.phone=this.value" autocomplete="tel"></div></div>
+    <div class="fld"><label>Special requests (optional)</label><textarea rows="3" oninput="BK.notes=this.value">${esc(BK.notes)}</textarea></div>
+    <div class="acts" style="justify-content:space-between"><button class="btn ghost" onclick="BK.step=1;renderBooking()">Back</button><button class="btn" onclick="bkNext()">Review</button></div>`;
+  }else{
+    body=`<h2>Review & confirm</h2>${dots}
+    <div class="sum"><b>${esc(d.name)}, ${esc(d.country)}</b><br>${BK.start} → ${addDays(BK.start,BK.days)} · ${BK.days} days · ${BK.trav} traveller${BK.trav>1?'s':''} · ${TIERS[BK.tier].n}<br>
+    <span class="hint">Places: ${[...BK.sel].map(i=>esc(d.places[i][0])).join(', ')||'none'}</span></div>
+    <div class="sum"><div class="line"><span>Booked by</span><b>${esc(BK.name)}</b></div><div class="line"><span>Contact</span><b>${esc(BK.email)} · ${esc(BK.phone)}</b></div>
+    <div class="line t"><span>Total budget cap</span><span>${fmt(total)}</span></div></div>
+    <p class="hint">Demo mode: confirming reserves the plan in your browser. No payment is collected. To take real bookings you'd connect a payment gateway and hotel/flight providers.</p>
+    <div class="acts" style="justify-content:space-between;margin-top:10px"><button class="btn ghost" onclick="BK.step=2;renderBooking()">Back</button><button class="btn alt" onclick="bkConfirm()">Confirm booking</button></div>`;
+  }
+  $('#md').innerHTML=`<div class="panel sm"><button class="x" onclick="closeModal()" aria-label="Close">×</button>${body}</div>`;
+  if(step===1&&!BK.done)bkPrice();
+}
+function bkPrice(){const {c,total}=bkTotals();const el=$('#bkp');if(el)el.innerHTML=`<div class="line"><span>Per person cap</span><b>${fmt(c.cap)}</b></div><div class="line t"><span>Total for ${BK.trav}</span><span>${fmt(total)}</span></div><div class="capnote">Ends ${addDays(BK.start,BK.days)}. Includes travel, stay, meals, selected places and a 10% buffer.</div>`}
+function bkNext(){
+  if(BK.step===1){if(!BK.start||BK.start<today()){toast('Pick a start date from today onwards');return}BK.step=2}
+  else if(BK.step===2){
+    if(BK.name.trim().length<2){toast('Please enter the traveller name');return}
+    if(!/^\S+@\S+\.\S+$/.test(BK.email)){toast('Please enter a valid email');return}
+    if(BK.phone.replace(/\D/g,'').length<10){toast('Please enter a valid phone number');return}
+    BK.step=3}
+  renderBooking();
+}
+function bkConfirm(){
+  const {total}=bkTotals(),ref='TM-'+Math.random().toString(36).slice(2,8).toUpperCase();
+  S.trips.unshift({id:ref,kind:'booking',ref,name:BK.d.name+' trip',dest:BK.d.name,destId:BK.d.id,start:BK.start,end:addDays(BK.start,BK.days),budget:total,travelers:BK.trav,tier:BK.tier,status:'upcoming',notes:BK.notes,itinerary:[...BK.sel].map(i=>BK.d.places[i][0]).join('; '),who:BK.name});
+  sv('tm_trips',S.trips);BK.done=ref;renderBooking();renderTrips();
+}
+
+/* ============================ TRIPS ============================ */
+function tStatus(t){if(t.status==='cancelled')return'cancelled';if(t.status==='completed')return'completed';if(t.end&&t.end<today())return'completed';return'upcoming'}
+function renderTrips(){
+  const tabs=[['all','All Trips'],['upcoming','Upcoming'],['completed','Completed']];
+  $('#tripTabs').innerHTML=tabs.map(t=>`<button class="chip ${S.tripTab===t[0]?'on':''}" onclick="S.tripTab='${t[0]}';renderTrips()">${t[1]}</button>`).join('');
+  const l=S.trips.filter(t=>S.tripTab==='all'||tStatus(t)===S.tripTab);
+  $('#tripList').innerHTML=l.length?l.map(t=>{const st=tStatus(t);return `<div class="trip"><div><h3>${esc(t.name)} <span class="st ${st}">${st}</span></h3>
+   <div class="hint">📍 ${esc(t.dest||'—')} · 📅 ${esc(t.start||'?')} → ${esc(t.end||'?')}${t.travelers?' · 👥 '+t.travelers:''}${t.budget?' · 💰 '+fmt(t.budget):''}${t.ref?' · Ref <b>'+esc(t.ref)+'</b>':''}</div>
+   ${t.itinerary?`<div style="margin-top:6px;font-size:.9rem"><b>Itinerary:</b> ${esc(t.itinerary)}</div>`:''}${t.notes?`<div class="hint" style="margin-top:4px">📝 ${esc(t.notes)}</div>`:''}</div>
+   <div class="acts">${t.destId?`<button class="btn sm ghost" onclick="openDest('${t.destId}')">View</button>`:''}${st==='upcoming'&&t.kind==='booking'?`<button class="btn sm ghost" onclick="cancelTrip('${t.id}')">Cancel booking</button>`:''}<button class="btn sm ghost" onclick="delTrip('${t.id}')">Delete</button></div></div>`}).join(''):'<div class="empty">No trips here yet. Book a destination or create your own plan.</div>';
+}
+function cancelTrip(id){if(!confirm('Cancel this booking?'))return;const t=S.trips.find(x=>x.id===id);if(t)t.status='cancelled';sv('tm_trips',S.trips);renderTrips();toast('Booking cancelled')}
+function delTrip(id){if(!confirm('Remove this trip from your list?'))return;S.trips=S.trips.filter(x=>x.id!==id);sv('tm_trips',S.trips);renderTrips()}
+function openNewTrip(){
+  $('#md').innerHTML=`<div class="panel sm"><button class="x" onclick="closeModal()">×</button><h2>Create New Trip</h2><div style="height:14px"></div>
+  <div class="fld"><label>Trip name</label><input id="nName"></div>
+  <div class="fld"><label>Destination</label><input id="nDest" list="dl"><datalist id="dl">${D.map(d=>`<option value="${esc(d.name)}">`).join('')}</datalist></div>
+  <div class="f2"><div><label>Start date</label><input id="nS" type="date"></div><div><label>End date</label><input id="nE" type="date"></div></div>
+  <div class="f2"><div><label>Budget (₹)</label><input id="nB" type="number" min="0"></div><div><label>Travel status</label><select id="nSt"><option value="upcoming">Upcoming</option><option value="completed">Completed</option></select></div></div>
+  <div class="fld"><label>Travel notes</label><textarea id="nN" rows="2"></textarea></div>
+  <div class="fld"><label>Itinerary / activities</label><textarea id="nI" rows="2"></textarea></div>
+  <div class="acts" style="justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveTrip()">Save Trip</button></div></div>`;
+  $('#md').classList.remove('hidden');
+}
+function saveTrip(){
+  const g=id=>$('#'+id).value.trim(),name=g('nName');
+  if(!name){toast('Give your trip a name');return}
+  const s=g('nS'),e=g('nE');if(s&&e&&e<s){toast('End date is before start date');return}
+  const dn=g('nDest'),m=D.find(d=>d.name.toLowerCase()===dn.toLowerCase());
+  S.trips.unshift({id:'T'+Date.now(),kind:'manual',name,dest:dn,destId:m?m.id:'',start:s,end:e,budget:+g('nB')||0,status:g('nSt'),notes:g('nN'),itinerary:g('nI')});
+  sv('tm_trips',S.trips);closeModal();renderTrips();toast('Trip saved ✅');
+}
+
+/* ============================ AUTH (demo, stored in this browser only) ============================ */
+function renderAuth(){
+  $('#auth').innerHTML=S.user?`<span>Hi, <b>${esc(S.user.name.split(' ')[0])}</b></span><button class="btn sm ghost" onclick="logout()">Logout</button>`
+   :`<button class="btn sm ghost" onclick="openAuth('login')">Login</button><button class="btn sm" onclick="openAuth('register')">Register</button>`;
+}
+function openAuth(mode){
+  const reg=mode==='register';
+  $('#md').innerHTML=`<div class="panel sm"><button class="x" onclick="closeModal()">×</button><h2>${reg?'Create account':'Login'}</h2><p class="hint" style="margin:4px 0 14px">Demo sign-in: your details stay in this browser only.</p>
+  <div class="fld"><label>Name</label><input id="aN" autocomplete="name"></div><div class="fld"><label>Email</label><input id="aE" type="email" autocomplete="email"></div>
+  <div class="acts" style="justify-content:space-between"><button class="btn ghost" onclick="openAuth('${reg?'login':'register'}')">${reg?'I have an account':'New here? Register'}</button><button class="btn" onclick="doAuth()">${reg?'Register':'Login'}</button></div></div>`;
+  $('#md').classList.remove('hidden');
+}
+function doAuth(){const n=$('#aN').value.trim(),e=$('#aE').value.trim();if(n.length<2||!/^\S+@\S+\.\S+$/.test(e)){toast('Enter your name and a valid email');return}S.user={name:n,email:e};sv('tm_user',S.user);closeModal();renderAuth();toast('Welcome, '+n.split(' ')[0]+'! 👋')}
+function logout(){S.user=null;try{localStorage.removeItem('tm_user')}catch(e){}renderAuth();toast('Logged out')}
+
+/* ============================ ROUTER ============================ */
+function go(v){location.hash=v==='trips'?'myTrips':v==='favs'?'favorites':'home'}
+function route(){
+  const h=(location.hash||'#home').slice(1);
+  const v=h==='myTrips'?'trips':h==='favorites'?'favs':'explore';
+  $('#v-explore').classList.toggle('hidden',v!=='explore');$('#v-trips').classList.toggle('hidden',v!=='trips');$('#v-favs').classList.toggle('hidden',v!=='favs');
+  document.querySelectorAll('.nav nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+(v==='explore'?(h==='destinations'?'destinations':'home'):h)));
+  if(v==='trips')renderTrips();if(v==='favs')renderFavs();
+  if(v==='explore'&&h==='destinations')setTimeout(()=>{const e=$('#destinations');e&&e.scrollIntoView&&e.scrollIntoView()},0);
+  else if(v!=='explore')window.scrollTo&&window.scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#md').classList.contains('hidden'))closeModal();else if(!$('#ov').classList.contains('hidden'))closeDest()}});
+$('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeDest()});
+$('#md').addEventListener('click',e=>{if(e.target.id==='md')closeModal()});
+
+initFinder();renderAuth();renderGrid();route();
+</script>
+</body>
+</html>
